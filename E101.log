@@ -1,0 +1,6 @@
+-- Found devicetree overlay: /__w/test_zmk-config/test_zmk-config/zmk/app/boards/shields/a_dux/a_dux_right.overlay
+-- Found devicetree overlay: /__w/test_zmk-config/test_zmk-config/config/a_dux.keymap
+Error: nice_nano.dts.pre.tmp:74.3-5 syntax error
+FATAL ERROR: Unable to parse input tree
+CMake Error at /__w/test_zmk-config/test_zmk-config/zephyr/cmake/dts.cmake:205 (message):
+  command failed with return code: 1

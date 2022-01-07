@@ -1,0 +1,7 @@
+In file included from /__w/test_zmk-config/test_zmk-config/zephyr/include/sys/util_macro.h:34,
+                 from /__w/test_zmk-config/test_zmk-config/zephyr/include/sys/util.h:17,
+                 from /__w/test_zmk-config/test_zmk-config/zmk/app/src/keymap.c:7:
+zephyr/include/generated/devicetree_unfixed.h:1415:44: error: 'DT_N_S_keymap_S_base_layer_P_bindings_IDX_1_PH_P_label' undeclared here (not in a function); did you mean 'DT_N_S_keymap_S_base_layer_P_bindings_IDX_10_PH'?
+ 1415 | #define DT_N_S_keymap_FOREACH_CHILD(fn) fn(DT_N_S_keymap_S_base_layer)
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+

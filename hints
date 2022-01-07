@@ -1,0 +1,65 @@
+#! /bin/bash
+
+set -e
+
+usage="help text here"
+buildlog=$1
+
+if [ $# -eq 0 ]; then
+	echo "$usage"
+	exit 1
+fi
+
+error() {
+	error_code="$1"
+	error_message="$2"
+
+	hint="$error_code: $error_message"
+	notice="See https://zmk.dev/docs/troubleshooting/ for help."
+
+	# Markup with annotations for GitHub actions if necessary
+	if [ "$GITHUB_ACTIONS" = true ]; then
+		hint="::error::$output"
+		notice="::notice::Build failed. $notice"
+	fi
+
+	echo -e "$hint\n"
+	echo "$notice"
+}
+
+if [ ! -f "$buildlog" ]; then
+	error M01 "Build log not found at '$buildlog'"
+	exit 2
+fi
+
+# # Provide helpful GitHub annotations if build fails:
+# echo "::notice::Build failed. See https://zmk.dev/docs/troubleshooting/ for help."
+
+# Check that a given sed command ($1) returns a match when run over the
+# build.log. Store the output of sed for further parsing.
+match() {
+  output="$(sed -nE "$1" "$buildlog")"
+  test -n "$output"
+}
+
+# Provide annotation for errors due to incorrect keycodes (e.g. `&kp ENTRE`)
+# Error: nice_nano.dts.pre.tmp:74.137-138 syntax error
+if match 's/^.+ (\S+\.dts.pre.tmp):([0-9]+)\.([0-9]+).+ syntax error.*$/\1 \2 \3/p'; then
+  read dts_file line_pos char_pos <<< "$output"
+  line=$(sed -n ${line_pos}p "build/zephyr/${dts_file}")
+  value=$(cut -c${char_pos}- <<< "$line" | cut -f1 -d\ )
+  error E101 "Unable to parse \"${value}\" from line: ${line}"
+fi
+
+# Provide annotation for errors due to missing parameters (e.g. `&mt LALT`):
+# zephyr/include/generated/devicetree_unfixed.h:1415:44: error: 'DT_N_S_keymap_S_base_layer_P_bindings_IDX_1_PH_P_label' undeclared here (not in a function)
+if match 's/^.+error: .DT_N_S_keymap_S_(.+)_P_bindings_IDX_([0-9])_PH_P_label. undeclared here.+$/\1 \2/p'; then
+  read layer index <<< "$output"
+  error E102 "Problem with index ${index} on layer \"${layer}\"."
+fi
+
+# Provide annotation for generic error messages such as:
+# nice_nano.dts.pre.tmp:734.14-741.5: ERROR (phandle_references): /keymap/base_layer: Reference to non-existent node or label "kc"
+if match 's/^.+dts\.pre\.tmp\S+ ERROR (.+)$/\1/p'; then
+  error E103 "${output}"
+fi

@@ -1,0 +1,7 @@
+-- Found devicetree overlay: /__w/test_zmk-config/test_zmk-config/zmk/app/boards/shields/a_dux/a_dux_left.overlay
+-- Found devicetree overlay: /__w/test_zmk-config/test_zmk-config/config/a_dux.keymap
+nice_nano.dts.pre.tmp:734.14-741.5: ERROR (phandle_references): /keymap/base_layer: Reference to non-existent node or label "kc"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+CMake Error at /__w/test_zmk-config/test_zmk-config/zephyr/cmake/dts.cmake:205 (message):
+  command failed with return code: 2
